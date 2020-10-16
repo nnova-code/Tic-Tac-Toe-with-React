@@ -13,6 +13,7 @@ If you do, please add your name to the contributors file with name, location, an
 3) Animate actions.</br>
 4) Add Header.</br>
 5) Add Footer.</br>
+6) Switch background colors depending who's turn it is. </br>
 </br>
 # Considered additions:</br>
 </br>

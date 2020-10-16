@@ -1,96 +1,109 @@
-import React from "react";
-import Board from "./Board";
+import React, {useState} from "react";
+import Container from '@material-ui/core/Container';
+import Square from "./Square";
+import Restart from "./RestartButton";
+import GameStatus from "./GameStatus"
 
-class Game extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          history: [{
-            squares: Array(9).fill(null),
-          }],
-          stepNumber: 0,
-          xIsNext: true,
-        };
-      }
-    handleClick(i) {
-        const history = this.state.history.slice(0, this.state.stepNumber + 1);
-        const current = history[history.length - 1];
-        const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
-          return;
-        }
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-          history: history.concat([{
-            squares: squares,
-          }]),
-          stepNumber: history.length,
-          xIsNext: !this.state.xIsNext,
-        });
-      }
-
-      jumpTo(step) {
-        this.setState({
-          stepNumber: step,
-          xIsNext: (step % 2) === 0,
-        });
-      }
-
-    render() {
-        const history = this.state.history;
-        const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);
-        const moves = history.map((step, move) => {
-            const desc = move ?
-              'Go to move #' + move :
-              'Go to game start';
-            return (
-                <li key={move}>
-                <button onClick={() => this.jumpTo(move)}>{desc}</button>
-              </li>
-            );
-          });
-        let status;
+function Game () {
+    
+    const [xIsNext, setXIsNext] = useState(true);
+    const [squares, setSquares] = useState(Array(9).fill(null));
+    const nextSymbol = xIsNext ? 'X' : 'O';
+    const winner = calculateWinner(squares);
+      
+    function getStatus() {
         if (winner) {
-            status = 'Winner: ' + winner;
+          return "Winner: " + winner;
+        } else if (isBoardFull(squares)) {
+          return "Draw!";
         } else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+          return "Next player: " + (nextSymbol);
         }
-      return (
-        <div className="game">
-          <div className="game-board">
-          <Board
-            squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
-          </div>
-          <div className="game-info">
-            <div>{status}</div>
-            <ol>{moves}</ol>
-          </div>
-        </div>
-      );
-    }
-  }
-
-  function calculateWinner(squares) {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
       }
+    function renderSquare(i){
+        return (
+            <Square 
+                value={squares[i]}
+                onClick={() => {
+                    if (squares[i] != null || winner != null) {
+                        return;
+                    }
+                    const nextSquares = squares.slice();
+                    nextSquares[i] = nextSymbol;;
+                    setSquares(nextSquares);
+                    setXIsNext(!xIsNext)
+                }}
+            />
+        );
     }
-    return null;
-  }
+
+    function renderRestartButton () {
+        return (
+            <Restart 
+                variant={winner? "contained": "text"}
+                onClick={() =>{
+                    setSquares(Array(9).fill(null));
+                    setXIsNext(true);
+                }}
+            />
+        )
+    }    
+    return (
+        <Container  align="center">
+            <div className="game">
+                <div className="game-board">
+                    <div className="board-row">
+                        {renderSquare(0)}
+                        {renderSquare(1)}
+                        {renderSquare(2)}
+                    </div>
+                    <div className="board-row">
+                        {renderSquare(3)}
+                        {renderSquare(4)}
+                        {renderSquare(5)}
+                    </div>
+                    <div className="board-row">
+                        {renderSquare(6)}
+                        {renderSquare(7)}
+                        {renderSquare(8)}
+                    </div>
+                </div>
+                <GameStatus getStatus={getStatus}/>
+                <div className="restart-button">{renderRestartButton()}</div>
+            </div>
+        </Container>
+    )
+    
+
+    function calculateWinner(squares) {
+        const lines = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+        for (let i = 0; i < lines.length; i++) {
+            const [a, b, c] = lines[i];
+            if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+                return squares[a];
+            }
+        }
+        return null;
+    }
+
+    function isBoardFull(squares) {
+        for (let i = 0; i < squares.length; i++) {
+            if (squares[i] == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+  
+}
 
   export default Game;
