@@ -18,7 +18,7 @@ const StyledButton = styled(Button)`
 
 function Square(props) {
     return (
-        <StyledButton className="square" onClick= {props.onClick}>
+        <StyledButton onClick= {props.onClick}>
             {props.value}
         </StyledButton>
     );

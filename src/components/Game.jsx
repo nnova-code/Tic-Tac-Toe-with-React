@@ -1,6 +1,8 @@
 import React, {useState} from "react";
+import Container from '@material-ui/core/Container';
 import Square from "./Square";
 import Restart from "./RestartButton";
+import GameStatus from "./GameStatus"
 
 function Game () {
     
@@ -38,6 +40,7 @@ function Game () {
     function renderRestartButton () {
         return (
             <Restart 
+                variant={winner? "contained": "text"}
                 onClick={() =>{
                     setSquares(Array(9).fill(null));
                     setXIsNext(true);
@@ -46,7 +49,7 @@ function Game () {
         )
     }    
     return (
-        <div className="container">
+        <Container  align="center">
             <div className="game">
                 <div className="game-board">
                     <div className="board-row">
@@ -65,10 +68,10 @@ function Game () {
                         {renderSquare(8)}
                     </div>
                 </div>
-                <div className="game-info">{getStatus()}</div>
+                <GameStatus getStatus={getStatus}/>
                 <div className="restart-button">{renderRestartButton()}</div>
             </div>
-        </div>
+        </Container>
     )
     
 

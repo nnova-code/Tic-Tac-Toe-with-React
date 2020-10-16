@@ -1,4 +1,5 @@
 import React from "react";
+import 'fontsource-roboto';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import Game from "./Game";
